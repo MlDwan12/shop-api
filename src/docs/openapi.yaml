@@ -1,0 +1,227 @@
+openapi: 3.1.0
+info:
+  title: Shop API
+  version: 1.0.0
+  description: API для управления категориями и товарами
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Categories
+    description: Работа с категориями товаров
+  - name: Products
+    description: Работа с товарами
+paths:
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: Получить все активные категории с подсчётом товаров
+      responses:
+        "200":
+          description: Список категорий
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoriesResponse"
+    post:
+      tags:
+        - Categories
+      summary: Добавить новую категорию
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryInput"
+      responses:
+        "201":
+          description: Категория успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+  /categories/{id}:
+    put:
+      tags:
+        - Categories
+      summary: Обновить категорию
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryInput"
+      responses:
+        "200":
+          description: Категория обновлена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+    delete:
+      tags:
+        - Categories
+      summary: Удалить категорию
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Категория удалена
+
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Добавить новый товар
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Товар создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+  /products/{id}:
+    put:
+      tags:
+        - Products
+      summary: Обновить товар
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          description: Товар обновлён
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    delete:
+      tags:
+        - Products
+      summary: Удалить товар
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Товар удалён
+
+components:
+  schemas:
+    CategoryInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Одежда"
+        parent_id:
+          type: string
+          format: uuid
+          nullable: true
+          example: null
+        is_active:
+          type: boolean
+          example: true
+      required:
+        - name
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-1234567890ab"
+        name:
+          type: string
+          example: "Одежда"
+        parent_id:
+          type: string
+          format: uuid
+          nullable: true
+          example: null
+        is_active:
+          type: boolean
+          example: true
+        product_count:
+          type: integer
+          example: 42
+
+    CategoriesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Category"
+
+    ProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Футболка"
+        category_id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-1234567890ab"
+        quantity:
+          type: integer
+          default: 0
+          example: 10
+        is_active:
+          type: boolean
+          example: true
+      required:
+        - name
+        - category_id
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "p1q2r3s4-t5u6-7890-vwxy-0987654321ab"
+        name:
+          type: string
+          example: "Футболка"
+        category_id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-1234567890ab"
+        quantity:
+          type: integer
+          example: 10
+        is_active:
+          type: boolean
+          example: true
